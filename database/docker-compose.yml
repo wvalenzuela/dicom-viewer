@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mariadb:latest
+    container_name: local_viewer_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: SuperSecurePassword
+      MYSQL_DATABASE: viewer_database
+      MYSQL_USER: waldo
+      MYSQL_PASSWORD: SuperSecurePassword
+    ports:
+      - '3307:3306'
+    command: --sql_mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION" --wait_timeout=500 --innodb_read_io_threads=8 --innodb_write_io_threads=8 --query_cache_size=134217728
+    volumes:
+      - ./local_mysql:/var/lib/mysql
+    healthcheck:
+      test: mysqladmin ping -h 127.0.0.1 -u waldo --password=SuperSecurePassword
+      timeout: 20s
+      retries: 10
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: local_viewer_phpmyadmin
+    links:
+      - mysql
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: SuperSecurePassword
+      PMA_ARBITRARY: 0
+    ports:
+      - '9099:80'
+    depends_on:
+      - mysql

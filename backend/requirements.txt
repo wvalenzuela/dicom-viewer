@@ -1,0 +1,7 @@
+pydicom
+Pillow
+numpy
+mysql-connector-python
+python-dotenv
+pylibjpeg
+pylibjpeg-libjpeg
