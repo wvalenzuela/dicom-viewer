@@ -4,7 +4,11 @@
 
 ## Prepare database
 
-in database folder run the docker-compose
+in database folder run, you to have docker running in your pc:
+
+```sh
+docker-compose up -d
+```
 
 ## Run Backend
 
@@ -30,4 +34,9 @@ npm install -g sequelize-cli
 
 ## Run Frontend
 
-Go to frontend folder and run npm install and then npm start
+Go to frontend folder and run
+
+```sh
+ npm install
+ npm start
+```
