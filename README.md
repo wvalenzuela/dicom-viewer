@@ -2,16 +2,32 @@
 
 2D/3D DICOM viewer with backend and frontend
 
-# Prepare database
+## Prepare database
 
 in database folder run the docker-compose
 
-# Run Backend
+## Run Backend
 
-install npm install -g sequelize-cli
-to populate the database run: npx sequelize-cli db:migrate
-Go to backend folder and run npm install and then npm start
+- First go to backend folder
+- Then install sequelize-cli to prepare the DB
 
-# Run Frontend
+```sh
+npm install -g sequelize-cli
+```
+
+- To populate the database run:
+
+```sh
+ npx sequelize-cli db:migrate
+```
+
+- Finally run:
+
+```sh
+ npm install
+ npm start
+```
+
+## Run Frontend
 
 Go to frontend folder and run npm install and then npm start
