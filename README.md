@@ -4,7 +4,7 @@
 
 ## Prepare database
 
-in database folder run, you to have docker running in your pc:
+In the "database" directory, ensure that Docker is operational on your computer before proceeding.
 
 ```sh
 docker-compose up -d
