@@ -16,6 +16,8 @@ docker-compose up -d
 - Then install sequelize-cli to prepare the DB
 
 ```sh
+cd ./backend/src
+
 npm install -g sequelize-cli
 ```
 
