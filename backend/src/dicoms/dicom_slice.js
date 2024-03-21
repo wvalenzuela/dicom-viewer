@@ -11,12 +11,13 @@ export const DicomSlice = async (req, res, models) => {
     }
     console.log({ idSeries, position });
     if (IsInvalid(idSeries)) {
-      throw Error('Invalid Series or your are not authenticated');
+      throw Error('1Invalid Series or your are not authenticated');
     }
     idSeries = parseInt(idSeries, 10);
     position = parseInt(position, 10);
     console.log({ idSeries, position });
     const Series = await models.Series.findByPk(idSeries, { raw: true });
+    console.log(Series);
     if (!Series || Series === undefined) {
       throw Error('Invalid Series or your are not authenticated');
     }
@@ -45,7 +46,7 @@ export const DicomSlice = async (req, res, models) => {
     const { FilePath } = file_dicoms[index];
     console.log({ FilePath, position });
     var spawn = require('child_process').spawn;
-    var process = spawn('python3', [
+    var process = spawn('python', [
       path.join(__dirname, '../python/converter.py'),
       path.join(__dirname, FilePath), // FilePath
     ]);

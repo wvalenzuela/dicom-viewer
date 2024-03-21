@@ -32,10 +32,12 @@ class ImageViewerContainer extends React.Component {
   // Initialize VTK rendering setup after the component is mounted.
   componentDidMount() {
     this.initializeVTK();
+    window.addEventListener('resize', this.handleResize);
   }
   // Cleanup the VTK setup before the component is unmounted and destroyed.
   componentWillUnmount() {
     this.destroyVTK();
+    window.removeEventListener('resize', this.handleResize);
   }
 
   fetchData = () => {
@@ -93,6 +95,29 @@ class ImageViewerContainer extends React.Component {
       };
     }
   }
+
+  handleResize = () => {
+    this.updateRenderWindowSize();
+    this.vtkContext.renderWindow.render();
+  }
+
+  updateRenderWindowSize(){
+    const { openGLRenderWindow } = this.vtkContext;
+    if (openGLRenderWindow) {
+      const {width, height} = this.vtkContainerRef.current.getBoundingClientRect();
+      openGLRenderWindow.setSize(width, height);
+    }
+  }
+
+//from: https://kitware.github.io/vtk-js/examples/Scrolling2DMixedImages.html
+/* function updateWindowLevel(slice) {
+  const img = imageMapper.getImage(slice);
+  const range = img.getPointData().getScalars().getRange();
+  const maxWidth = range[1] - range[0];
+  imageActor.getProperty().setColorWindow(maxWidth);
+  const center = Math.round((range[0] + range[1]) / 2);
+  imageActor.getProperty().setColorLevel(center);
+} */
 
   // Method to clean up VTK objects and free memory
   destroyVTK() {
