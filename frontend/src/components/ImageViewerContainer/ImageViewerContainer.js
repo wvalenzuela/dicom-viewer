@@ -1,20 +1,24 @@
+import '@kitware/vtk.js/favicon';
+import '@kitware/vtk.js/Rendering/Profiles/Volume';
+import '@kitware/vtk.js/IO/Core/DataAccessHelper/HtmlDataAccessHelper';
+import '@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper';
+import '@kitware/vtk.js/IO/Core/DataAccessHelper/JSZipDataAccessHelper';
+import vtkVolume from '@kitware/vtk.js/Rendering/Core/Volume';
+import vtkVolumeMapper from '@kitware/vtk.js/Rendering/Core/VolumeMapper';
+import vtkDataArray from '@kitware/vtk.js/Common/Core/DataArray';
+import vtkImageData from '@kitware/vtk.js/Common/DataModel/ImageData';
 import React from "react";
 import vtkRenderer from "@kitware/vtk.js/Rendering/Core/Renderer";
 import vtkRenderWindow from "@kitware/vtk.js/Rendering/Core/RenderWindow";
 import vtkRenderWindowInteractor from "@kitware/vtk.js/Rendering/Core/RenderWindowInteractor";
 import vtkOpenGLRenderWindow from "@kitware/vtk.js/Rendering/OpenGL/RenderWindow";
-import vtkImageMapper from "@kitware/vtk.js/Rendering/Core/ImageMapper";
-import vtkImageSlice from "@kitware/vtk.js/Rendering/Core/ImageSlice";
-import vtkImageData from "@kitware/vtk.js/Common/DataModel/ImageData";
-import vtkDataArray from "@kitware/vtk.js/Common/Core/DataArray";
 import SnackMessage from "../SnackMessage";
 import { Box, CircularProgress, Grid } from "@mui/material";
 
 // imports for the cone example
 import "@kitware/vtk.js/Rendering/Profiles/Geometry";
 import vtkConeSource from "@kitware/vtk.js/Filters/Sources/ConeSource";
-import vtkActor from "@kitware/vtk.js/Rendering/Core/Actor";
-import vtkMapper from "@kitware/vtk.js/Rendering/Core/Mapper";
+
 
 class ImageViewerContainer extends React.Component {
   constructor(props) {
@@ -50,6 +54,48 @@ class ImageViewerContainer extends React.Component {
   };
 
   initializeVTK() {
+    // Load the example response data from a JSON file
+    // TODO in future fetch()
+    const example = require("./exampleResponse.json");
+
+    // Calculate the total number of pixels in the image
+    const numpixel = example.width * example.height;
+
+    // Create a new Float32Array to store pixel values
+    const pixarray = new Float32Array(numpixel);
+
+    // Initialize an index variable for populating the pixarray
+    let i = 0;
+
+    // Iterate through each row of pixel data
+    example.pixelData.forEach((row) => {
+      // For each pixel in the row, assign its value to the corresponding position in pixarray
+      row.forEach((pixel) => {
+        pixarray[i] = pixel;
+        i++;
+      });
+    });
+
+    // Create a new instance of vtkImageData
+    const imageData = vtkImageData.newInstance({
+      origin: [0, 0, 0], // Set the origin (usually [0, 0, 0])
+      spacing: [1, 1, 1], // Set the spacing between pixels (usually [1, 1, 1])
+      direction: [1, 0, 0, 0, 1, 0, 0, 0, 1], // Set the direction (identity matrix)
+    });
+
+    // Create a new vtkDataArray to hold the pixel values
+    const dataArray = vtkDataArray.newInstance({
+      values: pixarray, // Assign the pixel values to the data array
+      numberOfComponents: 1, // Specify the number of components per datum (1 for grayscale)
+    });
+
+    // Set the data array as the scalars for the vtkImageData
+    imageData.getPointData().setScalars(dataArray);
+
+    // Set the dimensions of the image (512 x 448 x 1)
+    imageData.setDimensions([512, 448, 1]);
+
+
     if (this.vtkContainerRef.current && !this.vtkContext.initialized) {
       // Setup the main VTK render window, renderer, and OpenGL render window
       const renderWindow = vtkRenderWindow.newInstance();
@@ -71,12 +117,9 @@ class ImageViewerContainer extends React.Component {
       interactor.initialize();
       interactor.setContainer(this.vtkContainerRef.current);
 
-      // Example setup for rendering a cone instead of the image data
-      const coneSource = vtkConeSource.newInstance({ height: 1.0 });
-      const mapper = vtkMapper.newInstance();
-      mapper.setInputConnection(coneSource.getOutputPort());
-
-      const actor = vtkActor.newInstance();
+      const actor = vtkVolume.newInstance();
+      const mapper = vtkVolumeMapper.newInstance();
+      mapper.setInputData(imageData);
       actor.setMapper(mapper);
 
       // Adding the actor to the renderer and initiating the render process
