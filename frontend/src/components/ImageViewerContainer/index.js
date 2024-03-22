@@ -1,1 +1,1 @@
-export { default } from "./ImageViewerContainerTest";
+export { default } from "./ImageViewerContainer";

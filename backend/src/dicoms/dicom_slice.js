@@ -17,7 +17,6 @@ export const DicomSlice = async (req, res, models) => {
     position = parseInt(position, 10);
     console.log({ idSeries, position });
     const Series = await models.Series.findByPk(idSeries, { raw: true });
-    console.log(Series);
     if (!Series || Series === undefined) {
       throw Error('Invalid Series or your are not authenticated');
     }
