@@ -15,9 +15,6 @@ import vtkOpenGLRenderWindow from "@kitware/vtk.js/Rendering/OpenGL/RenderWindow
 import SnackMessage from "../SnackMessage";
 import { Box, CircularProgress, Grid } from "@mui/material";
 
-// imports for the cone example
-import "@kitware/vtk.js/Rendering/Profiles/Geometry";
-import vtkConeSource from "@kitware/vtk.js/Filters/Sources/ConeSource";
 
 
 class ImageViewerContainer extends React.Component {
