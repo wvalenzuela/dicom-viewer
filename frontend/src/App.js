@@ -22,7 +22,7 @@ export default function App() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ display: "flex",flexDirection: "row"}}>
         <CssBaseline />
         <ToolBar open={open} toggleDrawer={toggleDrawer} />
         <SideBar open={open} toggleDrawer={toggleDrawer} />
@@ -42,7 +42,7 @@ export default function App() {
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Routes>
               <Route path="/" element={<MetaInformationContainer />} />
-              <Route path="/image-viewer" element={<ImageViewerContainer />} />
+              <Route path="/image-viewer" element={<div style = {{display: "flex",flexDirection:"row"}}><ImageViewerContainer /><ImageViewerContainer /></div>} />
             </Routes>
           </Container>
         </Box>
