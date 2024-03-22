@@ -44,23 +44,43 @@ export const DicomSlice = async (req, res, models) => {
     }
     const { FilePath } = file_dicoms[index];
     console.log({ FilePath, position });
-    var spawn = require('child_process').spawn;
-    var process = spawn('python', [
-      path.join(__dirname, '../python/converter.py'),
-      path.join(__dirname, FilePath), // FilePath
-    ]);
-    let final_data = [];
-    process.stdout.on('data', function (data) {
-      final_data.push(data.toString());
-    });
-    process.on('close', function (code) {
-      console.log({ code });
-      if (code !== 0) {
-        console.log('an error has occurred');
-      } else {
-        const response = JSON.parse(final_data.join('').replace(/'/g, '"'));
-        res.json(response);
-      }
+    const spawn = require('child_process').spawn;
+
+    // Function to check if 'python3' is available
+    function checkPythonInterpreter() {
+      return new Promise((resolve) => {
+        const checkPython3 = spawn('python3', ['--version']);
+        checkPython3.on('close', (code) => {
+          if (code === 0) {
+            resolve('python3');
+          } else {
+            resolve('python');
+          }
+        });
+      });
+    }
+    
+    // Use the correct Python interpreter
+    checkPythonInterpreter().then((pythonInterpreter) => {
+      const process = spawn(pythonInterpreter, [
+        path.join(__dirname, '../python/converter.py'),
+        path.join(__dirname, FilePath), // FilePath
+      ]);
+    
+      let final_data = [];
+      process.stdout.on('data', function (data) {
+        final_data.push(data.toString());
+      });
+    
+      process.on('close', function (code) {
+        console.log({ code });
+        if (code !== 0) {
+          console.log('An error has occurred');
+        } else {
+          const response = JSON.parse(final_data.join('').replace(/'/g, '"'));
+          res.json(response);
+        }
+      });
     });
     process.stderr.on('data', (data) => {
       console.error(`stderr: ${data}`);
