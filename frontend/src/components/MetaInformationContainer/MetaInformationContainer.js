@@ -1,14 +1,14 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { JsonDcm, QueryDicomImage, ServerErrorsString } from '../../common';
-import SnackMessage from '../SnackMessage';
-import { Box, CircularProgress, Grid, TextField } from '@mui/material';
-class ViewerContainer extends React.Component {
+import React from "react";
+import PropTypes from "prop-types";
+import { JsonDcm, QueryDicomImage, ServerErrorsString } from "../../common";
+import SnackMessage from "../SnackMessage";
+import { Box, CircularProgress, Grid, TextField } from "@mui/material";
+class MetaInformationContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
-      error: '',
+      error: "",
       slice: null,
     };
   }
@@ -31,13 +31,13 @@ class ViewerContainer extends React.Component {
     })();
   };
   handleCloseSnak = () => {
-    this.setState({ error: '' });
+    this.setState({ error: "" });
   };
   render() {
     const { error, slice, loading } = this.state;
     let Component = (
       <Grid item>
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: "flex" }}>
           <CircularProgress />
         </Box>
       </Grid>
@@ -49,8 +49,8 @@ class ViewerContainer extends React.Component {
           <TextField
             label={key}
             defaultValue={metadata[key]}
-            variant='outlined'
-            margin='normal'
+            variant="outlined"
+            margin="normal"
           />
         </Grid>
       ));
@@ -62,17 +62,17 @@ class ViewerContainer extends React.Component {
         </Grid>
         <SnackMessage
           handleClose={this.handleCloseSnak}
-          message_text={error !== '' ? error : 'Unknown warning'}
-          open={error && error !== '' ? true : false}
-          type='error'
+          message_text={error !== "" ? error : "Unknown warning"}
+          open={error && error !== "" ? true : false}
+          type="error"
         />
       </React.Fragment>
     );
   }
 }
 
-ViewerContainer.propTypes = {
+MetaInformationContainer.propTypes = {
   classes: PropTypes.object,
 };
 
-export default ViewerContainer;
+export default MetaInformationContainer;
