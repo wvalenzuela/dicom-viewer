@@ -13,9 +13,10 @@ import vtkRenderWindow from "@kitware/vtk.js/Rendering/Core/RenderWindow";
 import vtkRenderWindowInteractor from "@kitware/vtk.js/Rendering/Core/RenderWindowInteractor";
 import vtkOpenGLRenderWindow from "@kitware/vtk.js/Rendering/OpenGL/RenderWindow";
 import SnackMessage from "../SnackMessage";
-import { Box, CircularProgress, Grid } from "@mui/material";
-
-
+import { Box, CircularProgress, Grid, Button, Toolbar } from "@mui/material";
+import BrushIcon from '@mui/icons-material/Brush';
+import StraightenIcon from '@mui/icons-material/Straighten';
+import VerticalSplitIcon from '@mui/icons-material/VerticalSplit';
 
 class ImageViewerContainer extends React.Component {
   constructor(props) {
@@ -30,10 +31,12 @@ class ImageViewerContainer extends React.Component {
     this.vtkContainerRef = React.createRef();
     this.vtkContext = { initialized: false };
   }
+
   // Initialize VTK rendering setup after the component is mounted.
   componentDidMount() {
     this.initializeVTK();
   }
+
   // Cleanup the VTK setup before the component is unmounted and destroyed.
   componentWillUnmount() {
     this.destroyVTK();
@@ -92,7 +95,6 @@ class ImageViewerContainer extends React.Component {
     // Set the dimensions of the image (512 x 448 x 1)
     imageData.setDimensions([512, 448, 1]);
 
-
     if (this.vtkContainerRef.current && !this.vtkContext.initialized) {
       // Setup the main VTK render window, renderer, and OpenGL render window
       const renderWindow = vtkRenderWindow.newInstance();
@@ -146,6 +148,7 @@ class ImageViewerContainer extends React.Component {
 
   render() {
     const { error, slice, loading } = this.state;
+
     // Loading bar
     let Component = (
       <Grid item>
@@ -154,21 +157,34 @@ class ImageViewerContainer extends React.Component {
         </Box>
       </Grid>
     );
+
     // Show image after data has loaded
     if (slice && !loading) {
       Component = (
-        <div
-          ref={this.vtkContainerRef}
-          style={{
-            width: "100%",
-            height: "80vh",
-            border: "5px solid sandybrown", // add border for debugging
-          }}
+          <div
+            ref={this.vtkContainerRef}
+            style={{
+              width: "100%",
+              height: "80vh",
+              border: "5px solid sandybrown", // add border for debugging
+            }}
         />
       );
     }
+
     return (
       <React.Fragment>
+        <Toolbar>
+          <Button variant="contained" color="primary" startIcon={<BrushIcon />}>
+            Paint
+          </Button>
+          <Button variant="contained" color="primary" startIcon={<StraightenIcon />}>
+            Measure
+          </Button>
+          <Button variant="contained" color="primary" startIcon={<VerticalSplitIcon />}>
+            Scroll
+          </Button>
+        </Toolbar>
         <Grid container spacing={1}>
           {Component}
         </Grid>
