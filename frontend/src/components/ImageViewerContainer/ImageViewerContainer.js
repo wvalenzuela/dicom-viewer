@@ -13,10 +13,8 @@ import vtkRenderWindow from "@kitware/vtk.js/Rendering/Core/RenderWindow";
 import vtkRenderWindowInteractor from "@kitware/vtk.js/Rendering/Core/RenderWindowInteractor";
 import vtkOpenGLRenderWindow from "@kitware/vtk.js/Rendering/OpenGL/RenderWindow";
 import SnackMessage from "../SnackMessage";
-import { Box, CircularProgress, Grid, Button, Toolbar } from "@mui/material";
-import BrushIcon from '@mui/icons-material/Brush';
-import StraightenIcon from '@mui/icons-material/Straighten';
-import VerticalSplitIcon from '@mui/icons-material/VerticalSplit';
+import { Box, CircularProgress, Grid } from "@mui/material";
+import ControlBar from "./ControlBar";
 
 class ImageViewerContainer extends React.Component {
   constructor(props) {
@@ -174,17 +172,7 @@ class ImageViewerContainer extends React.Component {
 
     return (
       <React.Fragment>
-        <Toolbar>
-          <Button variant="contained" color="primary" startIcon={<BrushIcon />}>
-            Paint
-          </Button>
-          <Button variant="contained" color="primary" startIcon={<StraightenIcon />}>
-            Measure
-          </Button>
-          <Button variant="contained" color="primary" startIcon={<VerticalSplitIcon />}>
-            Scroll
-          </Button>
-        </Toolbar>
+        <ControlBar />
         <Grid container spacing={1}>
           {Component}
         </Grid>
