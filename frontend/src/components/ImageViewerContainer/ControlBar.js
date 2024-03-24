@@ -8,11 +8,11 @@ import VerticalSplitIcon from '@mui/icons-material/VerticalSplit';
 const ControlBar = ({ onPaintClick, onMeasureClick, onScrollClick }) => {
     return (
       <MuiToolbar>
-        <Button variant="contained" color="primary" startIcon={<BrushIcon />} onClick={onPaintClick}>
+        <Button variant="contained" color='inherit' startIcon={<BrushIcon />} onClick={onPaintClick}>
         </Button>
-        <Button variant="contained" color="primary" startIcon={<StraightenIcon />} onClick={onMeasureClick}>
+        <Button variant="contained" color='inherit' startIcon={<StraightenIcon />} onClick={onMeasureClick}>
         </Button>
-        <Button variant="contained" color="primary" startIcon={<VerticalSplitIcon />} onClick={onScrollClick}>
+        <Button variant="contained" color="inherit" startIcon={<VerticalSplitIcon />} onClick={onScrollClick}>
         </Button>
       </MuiToolbar>
     );
