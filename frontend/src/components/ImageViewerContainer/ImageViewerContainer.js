@@ -14,7 +14,7 @@ import vtkRenderWindowInteractor from "@kitware/vtk.js/Rendering/Core/RenderWind
 import vtkOpenGLRenderWindow from "@kitware/vtk.js/Rendering/OpenGL/RenderWindow";
 import SnackMessage from "../SnackMessage";
 import { Box, CircularProgress, Grid } from "@mui/material";
-import ControlBar from "./ControlBar";
+import ToolBar from "./ToolBar/ToolBar";
 
 class ImageViewerContainer extends React.Component {
   constructor(props) {
@@ -172,7 +172,7 @@ class ImageViewerContainer extends React.Component {
 
     return (
       <React.Fragment>
-        <ControlBar />
+        <ToolBar />
         <Grid container spacing={1}>
           {Component}
         </Grid>
