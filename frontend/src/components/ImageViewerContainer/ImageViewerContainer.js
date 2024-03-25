@@ -15,9 +15,6 @@ import vtkOpenGLRenderWindow from "@kitware/vtk.js/Rendering/OpenGL/RenderWindow
 import SnackMessage from "../SnackMessage";
 import { Box, CircularProgress, Grid } from "@mui/material";
 
-// imports for the cone example
-import "@kitware/vtk.js/Rendering/Profiles/Geometry";
-import vtkConeSource from "@kitware/vtk.js/Filters/Sources/ConeSource";
 
 class ImageViewerContainer extends React.Component {
   constructor(props) {
@@ -53,7 +50,6 @@ class ImageViewerContainer extends React.Component {
   fetchData = () => {
     const { loading, error } = this.state;
     if (loading) return;
-
     // TODO: add logic to handle backend API call
   };
 
@@ -62,7 +58,7 @@ class ImageViewerContainer extends React.Component {
   };
 
   initializeVTK() {
-    // Load the example response data from a JSON file
+    // Load the exampleResponse response data from a JSON file
     // TODO in future fetch()
     const slice = require("./exampleResponse.json");
     this.state.slice = slice;
@@ -71,16 +67,16 @@ class ImageViewerContainer extends React.Component {
     const numpixel = slice.width * slice.height;
 
     // Create a new Float32Array to store pixel values
-    const pixarray = new Float32Array(numpixel);
+    const flattenedPixelArray = new Float32Array(numPixels);
 
-    // Initialize an index variable for populating the pixarray
+    // Initialize an index variable for populating the flattenedPixelArray
     let i = 0;
 
     // Iterate through each row of pixel data
     slice.pixelData.forEach((row) => {
       // For each pixel in the row, assign its value to the corresponding position in pixarray
       row.forEach((pixel) => {
-        pixarray[i] = pixel;
+        flattenedPixelArray[i] = pixel;
         i++;
       });
     });
@@ -94,7 +90,7 @@ class ImageViewerContainer extends React.Component {
 
     // Create a new vtkDataArray to hold the pixel values
     const dataArray = vtkDataArray.newInstance({
-      values: pixarray, // Assign the pixel values to the data array
+      values: flattenedPixelArray, // Assign the pixel values to the data array
       numberOfComponents: 1, // Specify the number of components per datum (1 for grayscale)
     });
 
