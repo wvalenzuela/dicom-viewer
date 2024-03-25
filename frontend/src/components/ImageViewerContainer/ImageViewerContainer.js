@@ -42,12 +42,25 @@ class ImageViewerContainer extends React.Component {
     this.destroyVTK();
   }
 
-  fetchData = () => {
-    const { loading, error } = this.state;
-    if (loading) return;
+  fetchData = async () => {
+    try {
+        // Set loading state to true
+        this.setState({ loading: true, error: null });
 
-    // TODO: add logic to handle backend API call
-  };
+        // Fetch data from backend
+        const res = await QueryDicomImage(1, 14);
+        
+        // Process response
+        const slice = new JsonDcm(JSON.parse(res.data));
+        
+        // Update state with fetched data
+        this.setState({ slice, loading: false });
+    } catch (error) {
+        // Handle errors
+        console.error('Error fetching data:', error);
+        this.setState({ loading: false, error: 'Failed to fetch data. Please try again later.' });
+    }
+};
 
   handleCloseSnak = () => {
     this.setState({ error: "" });
@@ -55,11 +68,10 @@ class ImageViewerContainer extends React.Component {
 
   initializeVTK() {
     // Load the example response data from a JSON file
-    // TODO in future fetch()
-    const example = require("./exampleResponse.json");
+    this.fetchData();
 
     // Calculate the total number of pixels in the image
-    const numpixel = example.width * example.height;
+    const numpixel = slice.width * slice.height;
 
     // Create a new Float32Array to store pixel values
     const pixarray = new Float32Array(numpixel);
@@ -68,7 +80,7 @@ class ImageViewerContainer extends React.Component {
     let i = 0;
 
     // Iterate through each row of pixel data
-    example.pixelData.forEach((row) => {
+    slice.pixelData.forEach((row) => {
       // For each pixel in the row, assign its value to the corresponding position in pixarray
       row.forEach((pixel) => {
         pixarray[i] = pixel;
