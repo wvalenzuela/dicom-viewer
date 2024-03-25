@@ -36,7 +36,8 @@ class ImageViewerContainer extends React.Component {
       initialized: false,
     };
     // Set the windowHeight depending on the screen size
-    this.state.windowHeight = window.screen.height * 0.7; //TODO convert magic number into variable
+    const screenHeightScaling = 0.7;
+    this.state.windowHeight = window.screen.height * screenHeightScaling; // Scale the window height to 70% of screen height
   }
   // Initialize VTK rendering setup after the component is mounted.
   componentDidMount() {
