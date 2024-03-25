@@ -67,7 +67,7 @@ class ImageViewerContainer extends React.Component {
     this.state.slice = slice;
 
     // Calculate the total number of pixels in the image
-    const numpixel = slice.width * slice.height;
+    const numPixels = slice.width * slice.height;
 
     // Create a new Float32Array to store pixel values
     const flattenedPixelArray = new Float32Array(numPixels);
