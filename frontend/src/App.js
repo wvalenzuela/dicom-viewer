@@ -22,7 +22,7 @@ export default function App() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Box sx={{ display: "flex",flexDirection: "row"}}>
+      <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <ToolBar open={open} toggleDrawer={toggleDrawer} />
         <SideBar open={open} toggleDrawer={toggleDrawer} />
@@ -40,9 +40,13 @@ export default function App() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            {/* Sets up routing for the application */}
             <Routes>
+              {/* Renders the MetaInformationContainer at the root path.
+                  This component displays DICOM file metadata, acting as the landing page of the app. */}
               <Route path="/" element={<MetaInformationContainer />} />
-              <Route path="/image-viewer" element={<div style = {{display: "flex",flexDirection:"row"}}><ImageViewerContainer /><ImageViewerContainer /></div>} />
+              {/* Directs to ImageViewerContainer for viewing DICOM images. */}
+              <Route path="/image-viewer" element={<ImageViewerContainer />} />
             </Routes>
           </Container>
         </Box>

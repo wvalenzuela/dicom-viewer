@@ -1,12 +1,12 @@
-import '@kitware/vtk.js/favicon';
-import '@kitware/vtk.js/Rendering/Profiles/Volume';
-import '@kitware/vtk.js/IO/Core/DataAccessHelper/HtmlDataAccessHelper';
-import '@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper';
-import '@kitware/vtk.js/IO/Core/DataAccessHelper/JSZipDataAccessHelper';
-import vtkVolume from '@kitware/vtk.js/Rendering/Core/Volume';
-import vtkVolumeMapper from '@kitware/vtk.js/Rendering/Core/VolumeMapper';
-import vtkDataArray from '@kitware/vtk.js/Common/Core/DataArray';
-import vtkImageData from '@kitware/vtk.js/Common/DataModel/ImageData';
+import "@kitware/vtk.js/favicon";
+import "@kitware/vtk.js/Rendering/Profiles/Volume";
+import "@kitware/vtk.js/IO/Core/DataAccessHelper/HtmlDataAccessHelper";
+import "@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper";
+import "@kitware/vtk.js/IO/Core/DataAccessHelper/JSZipDataAccessHelper";
+import vtkVolume from "@kitware/vtk.js/Rendering/Core/Volume";
+import vtkVolumeMapper from "@kitware/vtk.js/Rendering/Core/VolumeMapper";
+import vtkDataArray from "@kitware/vtk.js/Common/Core/DataArray";
+import vtkImageData from "@kitware/vtk.js/Common/DataModel/ImageData";
 import React from "react";
 import vtkRenderer from "@kitware/vtk.js/Rendering/Core/Renderer";
 import vtkRenderWindow from "@kitware/vtk.js/Rendering/Core/RenderWindow";
@@ -18,7 +18,6 @@ import { Box, CircularProgress, Grid } from "@mui/material";
 // imports for the cone example
 import "@kitware/vtk.js/Rendering/Profiles/Geometry";
 import vtkConeSource from "@kitware/vtk.js/Filters/Sources/ConeSource";
-
 
 class ImageViewerContainer extends React.Component {
   constructor(props) {
@@ -33,21 +32,21 @@ class ImageViewerContainer extends React.Component {
     };
     // Initializing reference for the container and a context object to manage VTK state.
     this.vtkContainerRef = React.createRef();
-    this.vtkContext = { 
-      initialized: false, 
+    this.vtkContext = {
+      initialized: false,
     };
-    // Setting window height dependent on screen size
-    this.state.windowHeight = window.screen.height - 300;
+    // Set the windowHeight depending on the screen size
+    this.state.windowHeight = window.screen.height * 0.7; //TODO convert magic number into variable
   }
   // Initialize VTK rendering setup after the component is mounted.
   componentDidMount() {
     this.initializeVTK();
-    window.addEventListener('resize', this.handleResize);
+    window.addEventListener("resize", this.handleResize);
   }
   // Cleanup the VTK setup before the component is unmounted and destroyed.
   componentWillUnmount() {
     this.destroyVTK();
-    window.removeEventListener('resize', this.handleResize);
+    window.removeEventListener("resize", this.handleResize);
   }
 
   fetchData = () => {
@@ -146,18 +145,21 @@ class ImageViewerContainer extends React.Component {
     }
   }
 
+  // Handles window resize events by updating the rendering size and reset the camera
   handleResize = () => {
-    
     this.updateRenderWindowSize();
     this.state.renderer.resetCamera();
-    this.vtkContext.renderWindow.render();
-  }
+    this.vtkContext.renderWindow.render(); // Re-render the scene with the updated settings
+  };
 
-  updateRenderWindowSize(){
+  // Updates the size of the OpenGL render window to match the dimensions of the container element
+  updateRenderWindowSize() {
     const { openGLRenderWindow } = this.vtkContext;
     if (openGLRenderWindow) {
-      const {width, height} = this.vtkContainerRef.current.getBoundingClientRect();
-      openGLRenderWindow.setSize(width, height);
+      // Obtain the new width and height from the container's bounding rectangle
+      const { width, height } =
+        this.vtkContainerRef.current.getBoundingClientRect();
+      openGLRenderWindow.setSize(width, height); // Set the OpenGL render window size
     }
   }
 
@@ -190,6 +192,8 @@ class ImageViewerContainer extends React.Component {
             width: "100%",
             height: this.state.windowHeight,
             border: "5px solid sandybrown", // add border for debugging
+            overflowY: "hidden", // hide vertical overflow
+            backgroundColor: "black",
           }}
         />
       );
