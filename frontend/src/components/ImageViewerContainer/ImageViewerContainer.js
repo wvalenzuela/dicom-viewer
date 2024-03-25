@@ -1,12 +1,12 @@
-import '@kitware/vtk.js/favicon';
-import '@kitware/vtk.js/Rendering/Profiles/Volume';
-import '@kitware/vtk.js/IO/Core/DataAccessHelper/HtmlDataAccessHelper';
-import '@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper';
-import '@kitware/vtk.js/IO/Core/DataAccessHelper/JSZipDataAccessHelper';
-import vtkVolume from '@kitware/vtk.js/Rendering/Core/Volume';
-import vtkVolumeMapper from '@kitware/vtk.js/Rendering/Core/VolumeMapper';
-import vtkDataArray from '@kitware/vtk.js/Common/Core/DataArray';
-import vtkImageData from '@kitware/vtk.js/Common/DataModel/ImageData';
+import "@kitware/vtk.js/favicon";
+import "@kitware/vtk.js/Rendering/Profiles/Volume";
+import "@kitware/vtk.js/IO/Core/DataAccessHelper/HtmlDataAccessHelper";
+import "@kitware/vtk.js/IO/Core/DataAccessHelper/HttpDataAccessHelper";
+import "@kitware/vtk.js/IO/Core/DataAccessHelper/JSZipDataAccessHelper";
+import vtkVolume from "@kitware/vtk.js/Rendering/Core/Volume";
+import vtkVolumeMapper from "@kitware/vtk.js/Rendering/Core/VolumeMapper";
+import vtkDataArray from "@kitware/vtk.js/Common/Core/DataArray";
+import vtkImageData from "@kitware/vtk.js/Common/DataModel/ImageData";
 import React from "react";
 import vtkRenderer from "@kitware/vtk.js/Rendering/Core/Renderer";
 import vtkRenderWindow from "@kitware/vtk.js/Rendering/Core/RenderWindow";
@@ -14,7 +14,6 @@ import vtkRenderWindowInteractor from "@kitware/vtk.js/Rendering/Core/RenderWind
 import vtkOpenGLRenderWindow from "@kitware/vtk.js/Rendering/OpenGL/RenderWindow";
 import SnackMessage from "../SnackMessage";
 import { Box, CircularProgress, Grid } from "@mui/material";
-
 
 
 class ImageViewerContainer extends React.Component {
@@ -25,18 +24,27 @@ class ImageViewerContainer extends React.Component {
       loading: false,
       error: "",
       slice: true, // set to true only for testing
+      renderer: null,
+      windowHeight: null,
     };
     // Initializing reference for the container and a context object to manage VTK state.
     this.vtkContainerRef = React.createRef();
-    this.vtkContext = { initialized: false };
+    this.vtkContext = {
+      initialized: false,
+    };
+    // Set the windowHeight depending on the screen size
+    const screenHeightScaling = 0.7;
+    this.state.windowHeight = window.screen.height * screenHeightScaling; // Scale the window height to 70% of screen height
   }
   // Initialize VTK rendering setup after the component is mounted.
   componentDidMount() {
     this.initializeVTK();
+    window.addEventListener("resize", this.handleResize);
   }
   // Cleanup the VTK setup before the component is unmounted and destroyed.
   componentWillUnmount() {
     this.destroyVTK();
+    window.removeEventListener("resize", this.handleResize);
   }
 
   fetchData = () => {
@@ -52,10 +60,11 @@ class ImageViewerContainer extends React.Component {
   initializeVTK() {
     // Load the exampleResponse response data from a JSON file
     // TODO in future fetch()
-    const exampleResponse = require("./exampleResponse.json");
+    const slice = require("./exampleResponse.json");
+    this.state.slice = slice;
 
     // Calculate the total number of pixels in the image
-    const numPixels = exampleResponse.width * exampleResponse.height;
+    const numpixel = slice.width * slice.height;
 
     // Create a new Float32Array to store pixel values
     const flattenedPixelArray = new Float32Array(numPixels);
@@ -64,8 +73,8 @@ class ImageViewerContainer extends React.Component {
     let i = 0;
 
     // Iterate through each row of pixel data
-    exampleResponse.pixelData.forEach((row) => {
-      // For each pixel in the row, assign its value to the corresponding position in flattenedPixelArray
+    slice.pixelData.forEach((row) => {
+      // For each pixel in the row, assign its value to the corresponding position in pixarray
       row.forEach((pixel) => {
         flattenedPixelArray[i] = pixel;
         i++;
@@ -91,11 +100,11 @@ class ImageViewerContainer extends React.Component {
     // Set the dimensions of the image (512 x 448 x 1)
     imageData.setDimensions([512, 448, 1]);
 
-
     if (this.vtkContainerRef.current && !this.vtkContext.initialized) {
       // Setup the main VTK render window, renderer, and OpenGL render window
       const renderWindow = vtkRenderWindow.newInstance();
       const renderer = vtkRenderer.newInstance();
+      this.state.renderer = renderer;
       renderWindow.addRenderer(renderer);
 
       const openGLRenderWindow = vtkOpenGLRenderWindow.newInstance();
@@ -133,6 +142,24 @@ class ImageViewerContainer extends React.Component {
     }
   }
 
+  // Handles window resize events by updating the rendering size and reset the camera
+  handleResize = () => {
+    this.updateRenderWindowSize();
+    this.state.renderer.resetCamera();
+    this.vtkContext.renderWindow.render(); // Re-render the scene with the updated settings
+  };
+
+  // Updates the size of the OpenGL render window to match the dimensions of the container element
+  updateRenderWindowSize() {
+    const { openGLRenderWindow } = this.vtkContext;
+    if (openGLRenderWindow) {
+      // Obtain the new width and height from the container's bounding rectangle
+      const { width, height } =
+        this.vtkContainerRef.current.getBoundingClientRect();
+      openGLRenderWindow.setSize(width, height); // Set the OpenGL render window size
+    }
+  }
+
   // Method to clean up VTK objects and free memory
   destroyVTK() {
     if (this.vtkContext.initialized) {
@@ -160,8 +187,10 @@ class ImageViewerContainer extends React.Component {
           ref={this.vtkContainerRef}
           style={{
             width: "100%",
-            height: "80vh",
+            height: this.state.windowHeight,
             border: "5px solid sandybrown", // add border for debugging
+            overflowY: "hidden", // hide vertical overflow
+            backgroundColor: "black",
           }}
         />
       );

@@ -40,8 +40,12 @@ export default function App() {
         >
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            {/* Sets up routing for the application */}
             <Routes>
+              {/* Renders the MetaInformationContainer at the root path.
+                  This component displays DICOM file metadata, acting as the landing page of the app. */}
               <Route path="/" element={<MetaInformationContainer />} />
+              {/* Directs to ImageViewerContainer for viewing DICOM images. */}
               <Route path="/image-viewer" element={<ImageViewerContainer />} />
             </Routes>
           </Container>
