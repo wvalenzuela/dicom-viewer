@@ -196,14 +196,14 @@ class ImageViewerContainer extends React.Component {
             border: "5px solid sandybrown", // add border for debugging
             overflowY: "hidden", // hide vertical overflow
             backgroundColor: "black",
-          }}
-        />
+          }}>
+          <ToolBar style={{ position: "absolut"}} />
+        </div>
       );
     }
 
     return (
       <React.Fragment>
-        <ToolBar />
         <Grid container spacing={1}>
           {Component}
         </Grid>
