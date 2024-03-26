@@ -70,6 +70,12 @@ const SideBar = ({ open, toggleDrawer }) => {
           </ListItemIcon>
           <ListItemText primary="Viewer" />
         </ListItemButton>
+        <ListItemButton onClick={() => navigate("/image-viewer2")}>
+          <ListItemIcon>
+            <ViewInArIcon />
+          </ListItemIcon>
+          <ListItemText primary="Experimental Viewer" />
+        </ListItemButton>
       </List>
     </Drawer>
   );

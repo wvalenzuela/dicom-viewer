@@ -17,10 +17,10 @@ import vtkRenderWindow from "@kitware/vtk.js/Rendering/Core/RenderWindow";
 import vtkRenderWindowInteractor from "@kitware/vtk.js/Rendering/Core/RenderWindowInteractor";
 import vtkOpenGLRenderWindow from "@kitware/vtk.js/Rendering/OpenGL/RenderWindow";
 import SnackMessage from "../SnackMessage";
-import { Box, CircularProgress, Grid } from "@mui/material";
-import { JsonDcm, QueryDicomImage, ServerErrorsString } from "../../common";
+import { Grid } from "@mui/material";
+import { JsonDcm, QueryDicomImage } from "../../common";
 
-function ImageViewerContainer() {
+function ImageViewerContainerTest() {
 
   // Reference to the VTK container element
   const vtkContainerRef = useRef(null);
@@ -115,7 +115,6 @@ function ImageViewerContainer() {
         imageData.delete();
         mapper.delete();
         actor.delete();
-        vtkContainerRef.delete();
         // Clear the context
         context.current = { vtkContext: { initialized: false } };
       }
@@ -191,4 +190,4 @@ function ImageViewerContainer() {
   );
 }
 
-export default ImageViewerContainer;
+export default ImageViewerContainerTest;

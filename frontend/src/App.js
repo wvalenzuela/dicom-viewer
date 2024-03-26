@@ -10,6 +10,7 @@ import {
   ToolBar,
   MetaInformationContainer,
   ImageViewerContainer,
+  ImageViewerContainerTest
 } from "./components";
 
 const defaultTheme = createTheme();
@@ -43,6 +44,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<MetaInformationContainer />} />
               <Route path="/image-viewer" element={<ImageViewerContainer />} />
+              <Route path="/image-viewer2" element={<ImageViewerContainerTest />} />
             </Routes>
           </Container>
         </Box>
