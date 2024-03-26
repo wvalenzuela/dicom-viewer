@@ -14,6 +14,7 @@ import vtkRenderWindowInteractor from "@kitware/vtk.js/Rendering/Core/RenderWind
 import vtkOpenGLRenderWindow from "@kitware/vtk.js/Rendering/OpenGL/RenderWindow";
 import SnackMessage from "../SnackMessage";
 import { Box, CircularProgress, Grid } from "@mui/material";
+import ToolBar from "./ToolBar/ToolBar";
 
 
 class ImageViewerContainer extends React.Component {
@@ -36,11 +37,13 @@ class ImageViewerContainer extends React.Component {
     const screenHeightScaling = 0.7;
     this.state.windowHeight = window.screen.height * screenHeightScaling; // Scale the window height to 70% of screen height
   }
+
   // Initialize VTK rendering setup after the component is mounted.
   componentDidMount() {
     this.initializeVTK();
     window.addEventListener("resize", this.handleResize);
   }
+
   // Cleanup the VTK setup before the component is unmounted and destroyed.
   componentWillUnmount() {
     this.destroyVTK();
@@ -64,7 +67,7 @@ class ImageViewerContainer extends React.Component {
     this.state.slice = slice;
 
     // Calculate the total number of pixels in the image
-    const numpixel = slice.width * slice.height;
+    const numPixels = slice.width * slice.height;
 
     // Create a new Float32Array to store pixel values
     const flattenedPixelArray = new Float32Array(numPixels);
@@ -172,6 +175,7 @@ class ImageViewerContainer extends React.Component {
 
   render() {
     const { error, slice, loading } = this.state;
+
     // Loading bar
     let Component = (
       <Grid item>
@@ -180,6 +184,7 @@ class ImageViewerContainer extends React.Component {
         </Box>
       </Grid>
     );
+
     // Show image after data has loaded
     if (slice && !loading) {
       Component = (
@@ -191,10 +196,12 @@ class ImageViewerContainer extends React.Component {
             border: "5px solid sandybrown", // add border for debugging
             overflowY: "hidden", // hide vertical overflow
             backgroundColor: "black",
-          }}
-        />
+          }}>
+          <ToolBar style={{ position: "absolut"}} />
+        </div>
       );
     }
+
     return (
       <React.Fragment>
         <Grid container spacing={1}>
