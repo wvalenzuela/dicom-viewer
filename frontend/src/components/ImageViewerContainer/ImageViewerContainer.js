@@ -60,36 +60,42 @@ class ImageViewerContainer extends React.Component {
     this.setState({ error: "" });
   };
 
-  initializeVTK() {
-    // Load the exampleResponse response data from a JSON file
-    // TODO in future fetch()
-    const slice = require("./exampleResponse.json");
-    this.state.slice = slice;
+  flattenPixelArray = (slice) =>{
+     // Calculate the total number of pixels in the image
+     const numPixels = slice.width * slice.height;
 
-    // Calculate the total number of pixels in the image
-    const numPixels = slice.width * slice.height;
+     // Create a new Float32Array to store pixel values
+     const flattenedPixelArray = new Float32Array(numPixels);
+ 
+     // Initialize an index variable for populating the flattenedPixelArray
+     let i = 0;
+ 
+     // Iterate through each row of pixel data
+     slice.pixelData.forEach((row) => {
+       // For each pixel in the row, assign its value to the corresponding position in pixarray
+       row.forEach((pixel) => {
+         flattenedPixelArray[i] = pixel;
+         i++;
+       });
+     });
+     return flattenedPixelArray;
+  }
 
-    // Create a new Float32Array to store pixel values
-    const flattenedPixelArray = new Float32Array(numPixels);
-
-    // Initialize an index variable for populating the flattenedPixelArray
-    let i = 0;
-
-    // Iterate through each row of pixel data
-    slice.pixelData.forEach((row) => {
-      // For each pixel in the row, assign its value to the corresponding position in pixarray
-      row.forEach((pixel) => {
-        flattenedPixelArray[i] = pixel;
-        i++;
-      });
-    });
-
+  initializeData = () => {     
     // Create a new instance of vtkImageData
     const imageData = vtkImageData.newInstance({
       origin: [0, 0, 0], // Set the origin (usually [0, 0, 0])
       spacing: [1, 1, 1], // Set the spacing between pixels (usually [1, 1, 1])
       direction: [1, 0, 0, 0, 1, 0, 0, 0, 1], // Set the direction (identity matrix)
     });
+    
+    
+    // Load the exampleResponse response data from a JSON file
+    // TODO in future fetch()
+    const slice = require("./exampleResponse.json");
+    this.state.slice = slice;
+    // flatten the 2D Array to fit into vtkDataArray
+    const flattenedPixelArray = this.flattenPixelArray(slice);
 
     // Create a new vtkDataArray to hold the pixel values
     const dataArray = vtkDataArray.newInstance({
@@ -102,7 +108,10 @@ class ImageViewerContainer extends React.Component {
 
     // Set the dimensions of the image (512 x 448 x 1)
     imageData.setDimensions([512, 448, 1]);
+    return imageData;
+  }
 
+  initializeVTK() {  
     if (this.vtkContainerRef.current && !this.vtkContext.initialized) {
       // Setup the main VTK render window, renderer, and OpenGL render window
       const renderWindow = vtkRenderWindow.newInstance();
@@ -127,7 +136,7 @@ class ImageViewerContainer extends React.Component {
 
       const actor = vtkVolume.newInstance();
       const mapper = vtkVolumeMapper.newInstance();
-      mapper.setInputData(imageData);
+      mapper.setInputData(this.initializeData());
       actor.setMapper(mapper);
 
       // Adding the actor to the renderer and initiating the render process
