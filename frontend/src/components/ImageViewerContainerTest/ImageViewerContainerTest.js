@@ -110,11 +110,6 @@ function ImageViewerContainerTest() {
         const { renderWindow, renderer, imageData, mapper, actor, vtkContainerRef, vtkContext } = context.current;
 
         // Delete VTK objects to free up memory
-        renderWindow.delete();
-        renderer.delete();
-        imageData.delete();
-        mapper.delete();
-        actor.delete();
         // Clear the context
         context.current = { vtkContext: { initialized: false } };
       }
@@ -168,7 +163,7 @@ function ImageViewerContainerTest() {
     <>
       <Grid container spacing={1}>
         <div>
-          resolution: {slice} <br />
+          slice: {slice} <br />
           <input
             type="range"
             min="0"
