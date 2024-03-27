@@ -112,6 +112,9 @@ class ImageViewerContainer extends React.Component {
       interactor.initialize();
       interactor.setContainer(this.vtkContainerRef.current);
 
+      // Initialize data here before using it
+      const imageData = this.initializeData();
+
       const actor = vtkVolume.newInstance();
       const mapper = vtkVolumeMapper.newInstance();
       mapper.setInputData(imageData);
