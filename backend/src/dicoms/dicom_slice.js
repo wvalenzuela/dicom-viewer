@@ -1,24 +1,24 @@
-import path from 'path';
-import { IsInvalid } from 'utils';
+import path from "path";
+import { IsInvalid } from "utils";
 
 export const DicomSlice = async (req, res, models) => {
-  console.log('DicomSlice');
+  console.log("DicomSlice");
   try {
-    let idSeries = req.headers['idseries'];
-    let position = req.headers['position'];
+    let idSeries = req.headers["idseries"];
+    let position = req.headers["position"];
     if (idSeries === undefined || position === undefined) {
-      throw Error('Invalid Input or Not Authenticated');
+      throw Error("Invalid Input or Not Authenticated");
     }
     console.log({ idSeries, position });
     if (IsInvalid(idSeries)) {
-      throw Error('Invalid Series or your are not authenticated');
+      throw Error("Invalid Series or your are not authenticated");
     }
     idSeries = parseInt(idSeries, 10);
     position = parseInt(position, 10);
     console.log({ idSeries, position });
     const Series = await models.Series.findByPk(idSeries, { raw: true });
     if (!Series || Series === undefined) {
-      throw Error('Invalid Series or your are not authenticated');
+      throw Error("Invalid Series or your are not authenticated");
     }
     const file_dicoms = await models.DicomFile.findAll({
       where: {
@@ -27,11 +27,11 @@ export const DicomSlice = async (req, res, models) => {
       raw: true,
     });
     if (IsInvalid(file_dicoms) || !file_dicoms.length) {
-      throw Error('Invalid DICOM file or your are not authenticated');
+      throw Error("Invalid DICOM file or your are not authenticated");
     }
     const positions = file_dicoms.map((x) => x.InstanceNumber);
     if (position < 0 || position >= positions.length) {
-      throw Error('Invalid DICOM position or your are not authenticated');
+      throw Error("Invalid DICOM position or your are not authenticated");
     }
     positions.sort(function (a, b) {
       return b - a;
@@ -40,7 +40,7 @@ export const DicomSlice = async (req, res, models) => {
       .map((x) => x.InstanceNumber)
       .indexOf(positions[position]);
     if (index === -1) {
-      throw Error('Invalid DICOM position or your are not authenticated');
+      throw Error("Invalid DICOM position or your are not authenticated");
     }
     const { FilePath } = file_dicoms[index];
     console.log({ FilePath, position });
@@ -82,7 +82,7 @@ export const DicomSlice = async (req, res, models) => {
         }
       });
     });
-    process.stderr.on('data', (data) => {
+    process.stderr.on("data", (data) => {
       console.error(`stderr: ${data}`);
     });
   } catch (error) {
