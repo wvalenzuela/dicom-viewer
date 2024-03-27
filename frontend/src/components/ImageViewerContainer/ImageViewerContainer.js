@@ -14,6 +14,7 @@ import vtkRenderWindowInteractor from "@kitware/vtk.js/Rendering/Core/RenderWind
 import vtkOpenGLRenderWindow from "@kitware/vtk.js/Rendering/OpenGL/RenderWindow";
 import SnackMessage from "../SnackMessage";
 import { Box, CircularProgress, Grid } from "@mui/material";
+import { JsonDcm, QueryDicomImage, ServerErrorsString } from "../../common";
 
 // imports for the cone example
 import "@kitware/vtk.js/Rendering/Profiles/Geometry";
@@ -27,10 +28,11 @@ class ImageViewerContainer extends React.Component {
     this.state = {
       loading: false,
       error: "",
-      slice: true, // set to true only for testing
+      slice: null, // set to true only for testing
     };
     // Initializing reference for the container and a context object to manage VTK state.
     this.vtkContainerRef = React.createRef();
+    console.log(this.vtkContainerRef);
     this.vtkContext = { initialized: false };
   }
   // Initialize VTK rendering setup after the component is mounted.
@@ -48,13 +50,15 @@ class ImageViewerContainer extends React.Component {
         this.setState({ loading: true, error: null });
 
         // Fetch data from backend
-        const res = await QueryDicomImage(1, 14);
+        const res = await QueryDicomImage(1, 10);
         
         // Process response
         const slice = new JsonDcm(JSON.parse(res.data));
         
         // Update state with fetched data
-        this.setState({ slice, loading: false });
+        this.setState({ loading: false, slice });
+        // this.state.slice = slice;
+        return slice;
     } catch (error) {
         // Handle errors
         console.error('Error fetching data:', error);
@@ -66,9 +70,9 @@ class ImageViewerContainer extends React.Component {
     this.setState({ error: "" });
   };
 
-  initializeVTK() {
+  async initializeVTK() {
     // Load the example response data from a JSON file
-    this.fetchData();
+    const slice = await this.fetchData();
 
     // Calculate the total number of pixels in the image
     const numpixel = slice.width * slice.height;
@@ -106,7 +110,6 @@ class ImageViewerContainer extends React.Component {
 
     // Set the dimensions of the image (512 x 448 x 1)
     imageData.setDimensions([512, 448, 1]);
-
 
     if (this.vtkContainerRef.current && !this.vtkContext.initialized) {
       // Setup the main VTK render window, renderer, and OpenGL render window
